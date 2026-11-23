@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101522">
+<title>رحلة 75 | متابع وزنك</title>
+<style>
+:root{--bg:#101522;--panel:#192233;--panel2:#222e42;--text:#f4f6fb;--muted:#a9b5c8;--green:#54d6a0;--blue:#75b7ff;--line:#2b3850;--red:#ff8585}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1b2940 0,#101522 48%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;min-height:100vh}
+.wrap{max-width:760px;margin:auto;padding:20px 16px 100px}.top{display:flex;align-items:center;justify-content:space-between;margin:8px 0 22px}.brand{font-size:24px;font-weight:850;letter-spacing:-.5px}.brand span{color:var(--green)}.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.pill{border:1px solid #315944;color:var(--green);border-radius:99px;padding:7px 12px;font-size:12px;background:#173328}
+.hero,.card{background:linear-gradient(145deg,#1c293d,#172131);border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:14px;box-shadow:0 10px 30px #0002}
+.hero{padding:22px}.eyebrow{font-size:13px;color:var(--muted)}.big{font-size:44px;font-weight:850;line-height:1.25;margin:5px 0}.big small{font-size:17px;color:var(--muted);font-weight:600}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.stat{background:#111a29;border-radius:16px;padding:13px}.stat label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}.stat strong{font-size:21px}
+.progress{height:9px;background:#303c50;border-radius:99px;overflow:hidden;margin-top:10px}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3fbf8b,#8be6b9);border-radius:99px;transition:width .3s}
+.section-title{font-size:17px;font-weight:800;margin:0 0 13px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.muted{color:var(--muted);font-size:13px}
+.calnum{font-size:24px;font-weight:800;color:var(--green)}button{border:0;border-radius:13px;padding:11px 14px;font:inherit;font-weight:750;color:#071a15;background:var(--green);cursor:pointer}button.secondary{background:var(--panel2);color:var(--text);border:1px solid #3a4961}button.blue{background:var(--blue);color:#102033}button.danger{background:#44252d;color:#ffc0c0}
+input{width:100%;background:#101827;border:1px solid #35445c;color:var(--text);border-radius:12px;padding:12px;font:inherit;outline:none}input:focus{border-color:var(--green)}.formrow{display:flex;gap:8px;margin-top:10px}.formrow>*{min-width:0}.formrow input{flex:1}.formrow button{white-space:nowrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.metric{font-size:24px;font-weight:800;margin:5px 0}.metric em{font-size:13px;font-style:normal;color:var(--muted);font-weight:500}
+.meal{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);gap:8px}.meal:last-child{border:0}.meal small{color:var(--muted)}
+.chart{height:135px;display:flex;align-items:end;gap:8px;padding:12px 2px 0;border-bottom:1px solid var(--line)}.barbox{flex:1;height:100%;display:flex;flex-direction:column;justify-content:end;align-items:center;gap:5px;min-width:0}.bar{width:min(100%,30px);background:linear-gradient(#62d9a6,#278a68);border-radius:8px 8px 3px 3px;min-height:3px}.barbox small{font-size:10px;color:var(--muted)}
+.note{font-size:12px;color:var(--muted);line-height:1.8}.nav{position:fixed;bottom:0;left:0;right:0;background:#111a29ee;backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;justify-content:center;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));z-index:5}.nav button{flex:1;max-width:240px;background:transparent;color:var(--muted);border:1px solid transparent;padding:9px 5px}.nav button.active{background:#203b34;color:var(--green);border-color:#315b4d}
+.view{display:none}.view.active{display:block}.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:#244a3b;color:#d9ffed;padding:10px 16px;border-radius:12px;z-index:10;display:none}
+@media(min-width:600px){.wrap{padding-top:30px}.hero{padding:26px}.big{font-size:52px}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<main class="wrap">
+<header class="top"><div><div class="brand">رحلة <span>75</span></div><div class="sub">خطوات صغيرة، ونتائج تستمر</div></div><div class="pill">مساحتك الشخصية</div></header>
+
+<section id="home" class="view active">
+ <div class="hero">
+  <div class="eyebrow">وزنك الحالي</div>
+  <div class="big" id="heroWeight">81.0 <small>كغ</small></div>
+  <div class="row"><span class="muted" id="remaining">باقي 6 كغ للوصول إلى هدفك</span><button class="secondary" onclick="showView('weight')">تحديث الوزن</button></div>
+  <div class="progress"><i id="goalProgress"></i></div>
+  <div class="stats">
+   <div class="stat"><label>الهدف الأول</label><strong id="goalValue">75 كغ</strong></div>
+   <div class="stat"><label>مؤشر كتلة الجسم</label><strong id="bmiValue">28.0</strong></div>
+  </div>
+ </div>
+ <div class="card">
+  <div class="row"><div><div class="section-title">السعرات اليوم</div><div class="muted">هدف مبدئي: 1700 سعرة</div></div><div class="calnum" id="calText">0 / 1700</div></div>
+  <div class="progress"><i id="calProgress"></i></div>
+  <div class="formrow"><input id="mealName" placeholder="اسم الوجبة"><input id="mealCal" type="number" min="1" inputmode="numeric" placeholder="السعرات"><button onclick="addMeal()">إضافة</button></div>
+  <div id="mealList"></div>
+ </div>
+ <div class="grid2">
+  <div class="card">
+   <div class="section-title">شرب الماء</div><div class="metric" id="waterText">0 <em>/ 2000 مل</em></div>
+   <div class="progress"><i id="waterProgress"></i></div><button class="blue" style="width:100%;margin-top:12px" onclick="addWater()">+ 250 مل</button>
+  </div>
+  <div class="card">
+   <div class="section-title">الخطوات</div><div class="metric" id="stepsText">0 <em>خطوة</em></div>
+   <div class="progress"><i id="stepsProgress"></i></div><button class="secondary" style="width:100%;margin-top:12px" onclick="addSteps()">+ 500 خطوة</button>
+  </div>
+ </div>
+ <div class="card"><div class="section-title">تذكير اليوم</div><div class="note">لا تحتاج إلى حمية قاسية أو تمارين مرهقة. ابدأ بالمشي والطعام المتوازن، وراقب متوسط وزنك أسبوعياً بدلاً من القلق من تغير يوم واحد.</div></div>
+</section>
+
+<section id="weight" class="view">
+ <div class="card"><div class="section-title">تسجيل الوزن</div><div class="muted">يفضل القياس صباحاً بعد دخول الحمام وقبل الإفطار، وبظروف متشابهة.</div>
+  <div class="formrow"><input id="weightInput" type="number" min="35" max="250" step=".1" inputmode="decimal" placeholder="وزنك بالكيلوغرام"><button onclick="saveWeight()">حفظ الوزن</button></div>
+ </div>
+ <div class="card"><div class="section-title">تطور الوزن</div><div id="weightChart" class="chart"></div><div id="weightHistory" style="margin-top:12px"></div></div>
+ <div class="card"><div class="section-title">هدفك</div><div class="formrow"><input id="goalInput" type="number" min="40" max="200" step=".1" inputmode="decimal" placeholder="الوزن المستهدف"><button class="secondary" onclick="saveGoal()">تعديل</button></div></div>
+</section>
+
+<section id="settings" class="view">
+ <div class="card"><div class="section-title">بياناتك الأساسية</div><div class="meal"><span>العمر</span><strong>23 سنة</strong></div><div class="meal"><span>الطول</span><strong>170 سم</strong></div><div class="meal"><span>الوزن الابتدائي</span><strong>81 كغ</strong></div><div class="meal"><span>النشاط الحالي</span><strong>قليل الحركة</strong></div></div>
+ <div class="card"><div class="section-title">إعدادات المتابعة</div><div class="muted">السعرات اليومية المستهدفة (قيمة أولية تقديرية)</div><div class="formrow"><input id="calGoalInput" type="number" min="1200" max="3500" step="50" inputmode="numeric"><button class="secondary" onclick="saveCalGoal()">حفظ</button></div></div>
+ <div class="card"><div class="section-title">بياناتك وخصوصيتك</div><div class="note">يحفظ الموقع بياناتك على هذا الجهاز فقط باستخدام التخزين المحلي للمتصفح. لا يوجد حساب ولا تُرسل بياناتك إلى خادم.</div><div class="formrow"><button class="secondary" onclick="exportData()">تصدير نسخة احتياطية</button><button class="danger" onclick="resetData()">مسح البيانات</button></div></div>
+ <div class="card"><div class="section-title">تنبيه صحي</div><div class="note">السعرات والوزن أهداف متابعة وليست تشخيصاً أو علاجاً. لا يمكن تحديد سبب دهون البطن أو الصدر من الوزن وحده، ولا يمكن افتراض أن الكورتيزول مرتفع دون تقييم طبي. خسارة الدهون تحدث من الجسم عموماً وليس من منطقة محددة.</div></div>
+</section>
+</main>
+<nav class="nav"><button class="active" data-view="home" onclick="showView('home')">الرئيسية</button><button data-view="weight" onclick="showView('weight')">الوزن</button><button data-view="settings" onclick="showView('settings')">الإعدادات</button></nav>
+<script>
+const KEY='rihla75_v1';
+const today=()=>new Date().toISOString().slice(0,10);
+let data=JSON.parse(localStorage.getItem(KEY)||'null')||{weight:81,goal:75,calGoal:1700,logs:[{date:today(),weight:81}],days:{}};
+function day(){if(!data.days[today()])data.days[today()]={meals:[],water:0,steps:0};return data.days[today()]}
+function persist(){localStorage.setItem(KEY,JSON.stringify(data));render();toast('تم الحفظ على جهازك')}
+function toast(s){let t=document.getElementById('toast');t.textContent=s;t.style.display='block';setTimeout(()=>t.style.display='none',1800)}
+function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===v));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===v));render()}
+function addMeal(){let n=document.getElementById('mealName').value.trim(),c=Number(document.getElementById('mealCal').value);if(!n||!Number.isFinite(c)||c<=0){toast('اكتب اسم الوجبة والسعرات');return}day().meals.push({name:n,cal:c});document.getElementById('mealName').value='';document.getElementById('mealCal').value='';persist()}
+function removeMeal(i){day().meals.splice(i,1);persist()}
+function addWater(){day().water+=250;persist()}
+function addSteps(){day().steps+=500;persist()}
+function saveWeight(){let v=Number(document.getElementById('weightInput').value);if(!v||v<35||v>250){toast('أدخل وزناً صحيحاً');return}data.weight=v;data.logs.push({date:today(),weight:v});data.logs=data.logs.slice(-90);persist();document.getElementById('weightInput').value=''}
+function saveGoal(){let v=Number(document.getElementById('goalInput').value);if(!v||v<40||v>=data.weight){toast('اجعل الهدف أقل من وزنك الحالي');return}data.goal=v;persist()}
+function saveCalGoal(){let v=Number(document.getElementById('calGoalInput').value);if(v<1200||v>3500){toast('أدخل رقماً بين 1200 و3500');return}data.calGoal=v;persist()}
+function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='rihla75-backup.json';a.click();URL.revokeObjectURL(a.href)}
+function resetData(){if(confirm('هل تريد مسح جميع بياناتك المحلية؟')){localStorage.removeItem(KEY);data={weight:81,goal:75,calGoal:1700,logs:[{date:today(),weight:81}],days:{}};render();toast('تمت إعادة ضبط البيانات')}}
+function render(){
+ let d=day(),cals=d.meals.reduce((s,m)=>s+m.cal,0),bmi=data.weight/(1.7*1.7),lost=81-data.weight,remaining=Math.max(0,data.weight-data.goal),progress=Math.max(0,Math.min(100,(81-data.weight)/(81-data.goal)*100));
+ document.getElementById('heroWeight').innerHTML=data.weight.toFixed(1)+' <small>كغ</small>';
+ document.getElementById('remaining').textContent=remaining>0?'باقي '+remaining.toFixed(1)+' كغ للوصول إلى هدفك':'وصلت إلى هدفك الأول!';
+ document.getElementById('goalValue').textContent=data.goal+' كغ';document.getElementById('bmiValue').textContent=bmi.toFixed(1);
+ document.getElementById('goalProgress').style.width=progress+'%';
+ document.getElementById('calText').textContent=cals+' / '+data.calGoal;document.getElementById('calProgress').style.width=Math.min(100,cals/data.calGoal*100)+'%';
+ document.getElementById('waterText').innerHTML=d.water+' <em>/ 2000 مل</em>';document.getElementById('waterProgress').style.width=Math.min(100,d.water/2000*100)+'%';
+ document.getElementById('stepsText').innerHTML=d.steps.toLocaleString('en-US')+' <em>خطوة</em>';document.getElementById('stepsProgress').style.width=Math.min(100,d.steps/7000*100)+'%';
+ document.getElementById('mealList').innerHTML=d.meals.map((m,i)=>`<div class="meal"><span>${escapeHtml(m.name)} <small>${m.cal} سعرة</small></span><button class="danger" style="padding:6px 10px" onclick="removeMeal(${i})">حذف</button></div>`).join('');
+ document.getElementById('goalInput').value=data.goal;document.getElementById('calGoalInput').value=data.calGoal;
+ let logs=data.logs.slice(-7);document.getElementById('weightChart').innerHTML=logs.map(l=>`<div class="barbox"><div class="bar" style="height:${Math.max(8,Math.min(100,l.weight/100*100))}%"></div><small>${l.weight}</small></div>`).join('');
+ document.getElementById('weightHistory').innerHTML=data.logs.slice(-10).reverse().map(l=>`<div class="meal"><span>${l.date}</span><strong>${l.weight.toFixed(1)} كغ</strong></div>`).join('');
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+render();
+</script>
+</body></html>
